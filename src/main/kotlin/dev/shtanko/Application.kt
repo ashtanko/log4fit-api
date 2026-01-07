@@ -35,6 +35,7 @@ fun main() {
 
 fun Application.module(isProd: Boolean, isDev: Boolean) {
     DatabaseFactory.init(isProd, isDev)
+    DatabaseFactory.runFlywayMigrations()
 
     configureCORS()
 

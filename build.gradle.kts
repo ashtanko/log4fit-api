@@ -1,10 +1,12 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+import org.flywaydb.gradle.task.FlywayMigrateTask
 
 plugins {
     alias(libs.plugins.kotlin.jvm)
     alias(libs.plugins.ktor)
     alias(libs.plugins.kotlin.plugin.serialization)
     alias(libs.plugins.ksp)
+    alias(libs.plugins.flyway)
 }
 
 group = "dev.shtanko"
@@ -52,6 +54,8 @@ dependencies {
     implementation(libs.ktor.server.default.headers)
     implementation(libs.ktor.server.cors)
     implementation(libs.ktor.simple.cache)
+    implementation(libs.flyway.core)
+    implementation(libs.flyway.database.postgresql)
 
     implementation(libs.ktor.server.task.scheduling.core)
     implementation(libs.ktor.server.task.scheduling.jdbc)
@@ -62,6 +66,13 @@ dependencies {
     testImplementation(libs.testcontainers.postgresql)
     testImplementation(libs.testcontainers.junit.jupiter)
     testImplementation(libs.mockk)
+
+    testImplementation(platform(libs.junit.bom))
+    testImplementation(libs.junit.jupiter)
+    testRuntimeOnly(libs.junit.platform.launcher)
+    testImplementation(libs.assertj)
+    testImplementation(libs.restAssured)
+    testImplementation(libs.ktor.client.cio)
 }
 
 sourceSets {
@@ -97,6 +108,14 @@ val integrationTest by tasks.registering(Test::class) {
 tasks.check {
     dependsOn(integrationTest)
 }
+
+flyway {
+    url = System.getenv("DB_URL")
+    user = System.getenv("DB_USER")
+    password = System.getenv("DB_PASSWORD")
+    locations = arrayOf("filesystem:src/main/resources/db/migration")
+}
+
 
 tasks.register<ShadowJar>("buildDevFatJar") {
     description = "Builds a fat JAR with a 'debug' classifier."
