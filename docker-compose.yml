@@ -4,12 +4,12 @@ services:
         ports:
             - "8083:8083"
         environment:
-            - DB_HOST=db
-            - DB_PORT=5432
-            - DB_NAME=log4fit_prod
-            - DB_USER=postgres
-            - DB_PASSWORD=password
-            - SECRET_KEY=secret
+            - DB_HOST=${DB_HOST}
+            - DB_PORT=${DB_PORT}
+            - DB_NAME=${DB_NAME}
+            - DB_USER=${DB_USER}
+            - DB_PASSWORD=${DB_PASSWORD}
+            - SECRET_KEY=${SECRET_KEY}
         depends_on:
             - db
         volumes:
@@ -18,11 +18,11 @@ services:
     db:
         image: postgres:15-alpine
         environment:
-            - POSTGRES_DB=log4fit_prod
-            - POSTGRES_USER=postgres
-            - POSTGRES_PASSWORD=password
+            - POSTGRES_DB=${DB_NAME}
+            - POSTGRES_USER=${DB_USER}
+            - POSTGRES_PASSWORD=${DB_PASSWORD}
         ports:
-            - "5433:5432"
+            - "${DB_PORT}:5432"
         volumes:
             - postgres_data:/var/lib/postgresql/data
 
@@ -57,8 +57,10 @@ services:
 
     grafana:
         image: grafana/grafana:latest
+        environment:
+            - GRAFANA_PORT=${GRAFANA_PORT}
         ports:
-            - "3001:3001"
+            - "${GRAFANA_PORT}:3002"
 
 volumes:
     postgres_data:
