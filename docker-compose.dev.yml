@@ -1,0 +1,9 @@
+services:
+    ktor-app-dev:
+        build:
+            target: dev
+        restart: always
+        ports:
+            - "8084:8084"
+        env_file:
+            - .env.dev

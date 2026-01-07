@@ -1,0 +1,44 @@
+# Gradle
+.gradle
+build/
+!gradle/wrapper/gradle-wrapper.jar
+
+# IntelliJ IDEA
+.idea/
+*.iml
+*.iws
+*.ipr
+out/
+
+# Environment
+.env
+.env.*
+!.env.example
+
+# Kotlin
+*.hot-update.js
+*.kdoc
+*.kt.js
+*.kt.js.map
+
+# Ktor
+*.trace.json
+
+# Operating System Files
+.DS_Store
+Thumbs.db
+
+# IDE-specific files
+.classpath
+.project
+.settings
+.factorypath
+.springBeans
+.sts4-cache
+bin/
+nbproject/private/
+nbbuild/
+dist/
+nbdist/
+.nb-gradle/
+.vscode/

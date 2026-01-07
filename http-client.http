@@ -1,0 +1,93 @@
+### Public API Test
+GET {{host}}/api/public-api
+Accept: application/json
+
+> {%
+    client.test("Request executed successfully", function() {
+        client.assert(response.status === 200, "Response status is not 200");
+    });
+%}
+
+### Register User
+POST {{host}}/api/auth/register
+Content-Type: application/json
+
+{
+  "name": "Integration Test User",
+  "password": "Password123",
+  "email": "int_user_{{$randomInt}}@example.com"
+}
+
+> {%
+    client.test("User registered successfully", function() {
+        if (response.status !== 200) {
+            client.log("Registration failed. Status: " + response.status);
+            client.log("Response body: " + JSON.stringify(response.body));
+        }
+        client.assert(response.status === 200, "Response status is not 200");
+    });
+%}
+
+### Login User
+POST {{host}}/api/auth/login
+Content-Type: application/json
+
+{
+  "username": "testuser",
+  "password": "password123"
+}
+
+> {%
+    client.test("Login successful", function() {
+        if (response.status !== 200) {
+            client.log("Login failed. Status: " + response.status);
+            client.log("Response body: " + JSON.stringify(response.body));
+        }
+        client.assert(response.status === 200, "Response status is not 200");
+        client.assert(response.body.hasOwnProperty("accessToken"), "Cannot find 'accessToken' in response");
+        client.assert(response.body.hasOwnProperty("refreshToken"), "Cannot find 'refreshToken' in response");
+    });
+
+    client.global.set("auth_token", response.body.accessToken);
+    client.global.set("refresh_token", response.body.refreshToken);
+%}
+
+### Get User Info (Protected)
+GET {{host}}/api/auth/me
+Authorization: Bearer {{auth_token}}
+Accept: application/json
+
+> {%
+    client.test("Protected endpoint accessible", function() {
+        client.assert(response.status === 200, "Response status is not 200");
+    });
+%}
+
+### Refresh Token
+POST {{host}}/api/auth/refresh
+Authorization: Bearer {{refresh_token}}
+Content-Type: application/json
+
+{
+  "refreshToken": "{{refresh_token}}"
+}
+
+> {%
+    client.test("Token refresh successful", function() {
+        client.assert(response.status === 200, "Response status is not 200");
+        client.assert(response.body.hasOwnProperty("accessToken"), "New token missing");
+    });
+    client.global.set("auth_token", response.body.accessToken);
+    client.global.set("refresh_token", response.body.refreshToken);
+%}
+
+### Health Check
+GET {{host}}/health
+Accept: text/plain
+
+> {%
+    client.test("Health check passed", function() {
+        client.assert(response.status === 200, "Response status is not 200");
+        client.assert(response.body === "OK", "Health check did not return OK");
+    });
+%}

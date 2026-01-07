@@ -1,0 +1,43 @@
+services:
+  app:
+    build: .
+    ports:
+      - "8082:8082"
+    environment:
+      - DB_HOST=db
+      - DB_PORT=5432
+      - DB_NAME=log4fit_prod
+      - DB_USER=postgres
+      - DB_PASSWORD=password
+      - SECRET_KEY=secret
+    depends_on:
+      - db
+    volumes:
+      - ./.env:/app/.env
+
+  db:
+    image: postgres:15-alpine
+    environment:
+      - POSTGRES_DB=log4fit_prod
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=password
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  pgadmin:
+    image: dpage/pgadmin4
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=admin@example.com
+      - PGADMIN_DEFAULT_PASSWORD=admin
+    ports:
+      - "5051:80"
+    depends_on:
+      - db
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
+
+volumes:
+  postgres_data:
+  pgadmin_data:

@@ -1,0 +1,9 @@
+services:
+    ktor-app-prod:
+        build:
+            target: production
+        restart: always
+        ports:
+            - "8083:8083"
+        env_file:
+            - .env.prod

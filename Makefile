@@ -1,0 +1,11 @@
+run-local:
+	docker compose -f docker-compose.local.yml up --build
+
+run-prod:
+	docker compose -f docker-compose.yml -f docker-compose.prod.yml up --build
+
+run-dev:
+	docker compose -f docker-compose.dev-db.yml -f docker-compose.dev.yml up --build
+
+test-api:
+	docker run --rm -i -t -v "$$(pwd):/workdir" -w /workdir --network host jetbrains/intellij-http-client -e local -v http-client.env.json http-client.http
