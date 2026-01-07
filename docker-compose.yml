@@ -29,14 +29,24 @@ services:
     pgadmin-prod:
         image: dpage/pgadmin4
         environment:
-            - PGADMIN_DEFAULT_EMAIL=admin@example.com
-            - PGADMIN_DEFAULT_PASSWORD=admin
+            - PGADMIN_DEFAULT_EMAIL=${PGADMIN_DEFAULT_EMAIL}
+            - PGADMIN_DEFAULT_PASSWORD=${PGADMIN_DEFAULT_PASSWORD}
         ports:
             - "5051:80"
         depends_on:
             - db-prod
         volumes:
             - pgadmin_data:/var/lib/pgadmin
+
+    tunnel:
+        image: cloudflare/cloudflared:latest
+        depends_on:
+            - ktor-app-prod
+        container_name: cloudflared-tunnel
+        restart: unless-stopped
+        command: tunnel --no-autoupdate run
+        environment:
+            - TUNNEL_TOKEN=${TUNNEL_TOKEN}
 
 #    redis-prod:
 #        image: redis:7-alpine
