@@ -1,4 +1,4 @@
-.PHONY: run-local run-prod run-dev test-api docker-clean
+.PHONY: run-local run-prod run-dev test-api docker-clean migrate-dev
 
 run-local:
 	docker compose -f docker-compose.local.yml up --build
@@ -14,3 +14,9 @@ test-api:
 
 docker-clean:
 	docker compose -f docker-compose.yml -f docker-compose.prod.yml -f docker-compose.dev.yml down -v --remove-orphans
+
+migrate-dev:
+	DB_URL=jdbc:postgresql://localhost:5434/log4fit_dev \
+	DB_USER=user \
+	DB_PASSWORD=password \
+	./gradlew flywayMigrate

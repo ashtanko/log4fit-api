@@ -10,7 +10,7 @@ object TableConverter {
 
     fun rowToExposedUser(row: ResultRow): ExposedUser {
         return ExposedUser(
-            id = row[UserTable.id],
+            id = row[UserTable.id].value,
             name = row[UserTable.name],
             password = row[UserTable.password],
             email = row[UserTable.email],

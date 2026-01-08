@@ -1,50 +1,49 @@
 services:
-  ktor-app-dev:
-    build: .
-    ports:
-      - "8084:8084"
-    environment:
-      - ENV=dev # Run in "dev" mode to use Postgres
-      - PORT=8084
-      - DB_URL=jdbc:postgresql://db:5434/log4fit_dev
-      - DB_USER=user
-      - DB_PASSWORD=password
-      - JWT_SECRET=secret
-      - JWT_ISSUER=http://localhost:8084
-      - JWT_AUDIENCE=users
-      - JWT_REALM=ktor-app
-    depends_on:
-      - db-dev
+    ktor-app-dev:
+        build: .
+        ports:
+            - "8084:8084"
+        environment:
+            - DB_HOST=${DB_HOST}
+            - DB_PORT=${DB_PORT}
+            - DB_NAME=${DB_NAME}
+            - DB_USER=${DB_USER}
+            - DB_PASSWORD=${DB_PASSWORD}
+            - SECRET_KEY=${SECRET_KEY}
+        depends_on:
+            - db-dev
+        volumes:
+            - ./.env:/app/.env
 
-  db-dev:
-    image: postgres:15-alpine
-    environment:
-      - POSTGRES_DB=log4fit_dev
-      - POSTGRES_USER=user
-      - POSTGRES_PASSWORD=password
-    ports:
-      - "5434:5434"
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
+    db-dev:
+        image: postgres:15-alpine
+        environment:
+            - POSTGRES_DB=${DB_NAME}
+            - POSTGRES_USER=${DB_USER}
+            - POSTGRES_PASSWORD=${DB_PASSWORD}
+        ports:
+            - "${DB_PORT}:5432"
+        volumes:
+            - postgres_data:/var/lib/postgresql/data
 
-  pgadmin-dev:
-    image: dpage/pgadmin4
-    environment:
-      - PGADMIN_DEFAULT_EMAIL=admin-dev@example.com
-      - PGADMIN_DEFAULT_PASSWORD=admin-dev
-      - PGADMIN_CONFIG_ENHANCED_COOKIE_PROTECTION=False
-    ports:
-      - "5054:80"
-    depends_on:
-      - db-dev
+    pgadmin-dev:
+        image: dpage/pgadmin4
+        environment:
+            - PGADMIN_DEFAULT_EMAIL=${PGADMIN_DEFAULT_EMAIL}
+            - PGADMIN_DEFAULT_PASSWORD=${PGADMIN_DEFAULT_PASSWORD}
+            - PGADMIN_CONFIG_ENHANCED_COOKIE_PROTECTION=False
+        ports:
+            - "5054:80"
+        depends_on:
+            - db-dev
 
-  dozzle-dev:
-    image: amir20/dozzle:latest
-    container_name: dozzle-dev
-    ports:
-      - "9999:8090"
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
+    dozzle-dev:
+        image: amir20/dozzle:latest
+        container_name: dozzle-dev
+        ports:
+            - "9999:8090"
+        volumes:
+            - /var/run/docker.sock:/var/run/docker.sock
 
 volumes:
-  postgres_data:
+    postgres_data:

@@ -2,18 +2,7 @@ package dev.shtanko
 
 import configureCORS
 import dev.shtanko.database.DatabaseFactory
-import dev.shtanko.plugins.configureAdministration
-import dev.shtanko.plugins.configureAsyncApi
-import dev.shtanko.plugins.configureExceptionHandler
-import dev.shtanko.plugins.configureHTTP
-import dev.shtanko.plugins.configureKoin
-import dev.shtanko.plugins.configureMonitoring
-import dev.shtanko.plugins.configureOpenApi
-import dev.shtanko.plugins.configureRateLimit
-import dev.shtanko.plugins.configureRouting
-import dev.shtanko.plugins.configureSecurity
-import dev.shtanko.plugins.configureSerialization
-import dev.shtanko.plugins.configureValidation
+import dev.shtanko.plugins.*
 import io.ktor.server.application.*
 import io.ktor.server.engine.*
 import io.ktor.server.netty.*
@@ -21,8 +10,8 @@ import org.slf4j.LoggerFactory
 
 fun main() {
     val env = System.getenv("ENV")
-    val isProd = env == "production" || env == "dev"
-    val port = System.getenv("PORT")?.toInt() ?: if(isProd) 8083 else 8082
+    val isProd = env == "production"
+    val port = System.getenv("PORT")?.toInt() ?: if (isProd) 8083 else 8082
     val isDev = env == "dev"
     System.setProperty("io.ktor.development", if (isProd) "false" else "true")
 
@@ -35,7 +24,9 @@ fun main() {
 
 fun Application.module(isProd: Boolean, isDev: Boolean) {
     DatabaseFactory.init(isProd, isDev)
-    DatabaseFactory.runFlywayMigrations()
+    if (isProd or isDev) {
+        DatabaseFactory.runFlywayMigrations()
+    }
 
     configureCORS()
 
