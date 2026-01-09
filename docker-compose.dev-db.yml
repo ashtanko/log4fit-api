@@ -51,6 +51,16 @@ services:
         volumes:
             - /var/run/docker.sock:/var/run/docker.sock
 
+    tunnel:
+        image: cloudflare/cloudflared:latest
+        depends_on:
+            - ktor-app-dev
+        container_name: cloudflared-tunnel
+        restart: unless-stopped
+        command: tunnel --no-autoupdate run
+        environment:
+            - TUNNEL_TOKEN=${TUNNEL_TOKEN}
+
 volumes:
     postgres_data:
     pgadmin_dev_data:
