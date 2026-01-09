@@ -42,7 +42,7 @@ services:
         volumes:
             - pgadmin_prod_data:/var/lib/pgadmin
 
-    tunnel:
+    tunnel-prod:
         image: cloudflare/cloudflared:latest
         depends_on:
             - ktor-app-prod

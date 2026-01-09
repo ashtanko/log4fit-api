@@ -51,7 +51,7 @@ services:
         volumes:
             - /var/run/docker.sock:/var/run/docker.sock
 
-    tunnel:
+    tunnel-dev:
         image: cloudflare/cloudflared:latest
         depends_on:
             - ktor-app-dev
