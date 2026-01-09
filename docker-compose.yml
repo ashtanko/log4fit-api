@@ -46,7 +46,7 @@ services:
         image: cloudflare/cloudflared:latest
         depends_on:
             - ktor-app-prod
-        container_name: cloudflared-tunnel
+        container_name: cloudflared-tunnel-prod
         restart: unless-stopped
         command: tunnel --no-autoupdate run
         environment:

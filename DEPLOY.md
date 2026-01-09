@@ -46,7 +46,7 @@ To deploy a new version of the application without data loss:
     make run-prod
     ```
 
-    *Note: This will cause a brief downtime while the application container restarts. For zero-downtime deployments, a more complex setup with a reverse proxy (like Nginx) and blue-green deployment is required.*
+    *Note: This will cause a brief downtime while the application container restarts. For zero-downtime deployments, see the section below.*
 
 3.  **Run Database Migrations**:
     If the update includes database schema changes, run the migrations. Since the production database is inside Docker, you can run the migration task against it.
@@ -54,6 +54,46 @@ To deploy a new version of the application without data loss:
     # Ensure you have the correct DB credentials exported or in your .env
     ./gradlew flywayMigrate
     ```
+
+## Zero-Downtime Deployment Strategies
+
+To avoid the brief downtime during a restart, you can use one of the following strategies.
+
+### Strategy 1: Cloudflare Tunnel (Recommended)
+
+Cloudflare Tunnel allows you to expose your application securely without opening ports on your firewall. It also provides load balancing capabilities that can be used for zero-downtime deployments.
+
+1.  **Install `cloudflared`**: Install the Cloudflare daemon on your server.
+2.  **Authenticate**: Run `cloudflared tunnel login`.
+3.  **Create a Tunnel**: Run `cloudflared tunnel create log4fit-prod`.
+4.  **Configure the Tunnel**: Create a `config.yml` file:
+    ```yaml
+    tunnel: <Tunnel-UUID>
+    credentials-file: /root/.cloudflared/<Tunnel-UUID>.json
+
+    ingress:
+      - hostname: api.log4.fit
+        service: http://localhost:8083
+      - service: http_status:404
+    ```
+5.  **Run the Tunnel**: `cloudflared tunnel run log4fit-prod`.
+
+**For Zero-Downtime Updates:**
+Cloudflare's load balancing (available on paid plans or via manual DNS switching) allows you to run two instances of your application (Blue/Green) and switch traffic to the new one only after it's healthy.
+
+### Strategy 2: Blue-Green Deployment with Nginx
+
+This involves running two instances of your application (Blue and Green) behind a local Nginx reverse proxy.
+
+1.  **Update Docker Compose**: Define two services (`app-blue` and `app-green`) pointing to the same image but different internal ports.
+2.  **Configure Nginx**: Set up Nginx to proxy traffic to `http://app-blue:8080`.
+3.  **Deploy New Version**:
+    *   Pull code and build.
+    *   Start the *inactive* container (e.g., Green) with the new code.
+    *   Wait for it to become healthy.
+    *   Update Nginx config to point to `http://app-green:8080`.
+    *   Reload Nginx (`nginx -s reload`).
+    *   Stop the old Blue container.
 
 ## Data Safety & Backups
 
