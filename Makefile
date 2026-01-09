@@ -13,7 +13,9 @@ test-api:
 	docker run --rm -it -v "$$(pwd):/workdir" -w /workdir --network host jetbrains/intellij-http-client -e local -v http-client.env.json http-client.http
 
 docker-clean:
-	docker compose -f docker-compose.yml -f docker-compose.prod.yml -f docker-compose.dev.yml down -v --remove-orphans
+	docker compose -p log4fit-local -f docker-compose.local.yml down -v --remove-orphans --rmi local
+	docker compose -p log4fit-prod -f docker-compose.prod.yml down -v --remove-orphans --rmi local
+	docker compose -p log4fit-dev -f docker-compose.dev-db.yml down -v --remove-orphans --rmi local
 
 migrate-dev:
 	DB_URL=jdbc:postgresql://localhost:5434/log4fit_dev \
