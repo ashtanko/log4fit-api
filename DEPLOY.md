@@ -99,9 +99,50 @@ This involves running two instances of your application (Blue and Green) behind 
 
 **The most critical rule: Never delete the Docker volume `log4fit-prod_postgres_data`.** This volume contains your production database files.
 
-### Backing Up the Database
+### Automated Cloud Backups (Recommended)
 
-You should automate regular backups of your PostgreSQL database. Here is a command to manually create a backup:
+The best way to backup your database is to use a "sidecar" Docker container that automatically dumps the database and uploads it to cloud storage. We recommend **Cloudflare R2** because it is S3-compatible and offers **10GB of storage for free**.
+
+#### 1. Set up Cloudflare R2
+1.  Log in to the Cloudflare Dashboard and go to **R2**.
+2.  Create a new bucket (e.g., `log4fit-backups`).
+3.  Go to **Manage R2 API Tokens** and create a new token with **Object Read & Write** permissions.
+4.  Copy the `Access Key ID`, `Secret Access Key`, and the `Endpoint` URL.
+
+#### 2. Add Backup Service to Docker Compose
+Add the following service to your `prod.docker-compose.yml` file:
+
+```yaml
+  backup:
+    image: eugenmayer/postgresql-backup-s3:latest
+    restart: always
+    environment:
+      # Schedule: Run every 6 hours
+      - SCHEDULE=@every 6h
+      # Database Connection
+      - POSTGRES_HOST=db
+      - POSTGRES_DB=${DB_NAME:-prod_db}
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      # S3 / Cloudflare R2 Configuration
+      - S3_BUCKET=log4fit-backups
+      - S3_PREFIX=daily-backups
+      - S3_REGION=auto
+      - S3_ENDPOINT=https://<YOUR_ACCOUNT_ID>.r2.cloudflarestorage.com
+      - AWS_ACCESS_KEY_ID=<YOUR_ACCESS_KEY_ID>
+      - AWS_SECRET_ACCESS_KEY=<YOUR_SECRET_ACCESS_KEY>
+      # Retention: Keep backups for 7 days
+      - DELETE_OLDER_THAN=7d
+    depends_on:
+      - db
+```
+
+#### 3. Deploy
+Run `make run-prod`. The backup container will start and automatically back up your database every 6 hours.
+
+### Manual Backups
+
+You can also manually create a backup at any time:
 
 ```bash
 # Replace 'log4fit-prod-db-1' with your actual database container name

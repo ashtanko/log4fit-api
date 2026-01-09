@@ -11,6 +11,7 @@ import dev.shtanko.service.AuthService
 import dev.shtanko.service.TransactionService
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
+import io.ktor.server.http.content.*
 import io.ktor.server.plugins.ratelimit.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
@@ -20,6 +21,11 @@ fun Application.configureRouting() {
     val authService by inject<AuthService>()
     val transactionService by inject<TransactionService>()
     routing {
+        // Serve static resources from the "static" folder
+        staticResources("/", "static") {
+            default("index.html")
+        }
+
         healthCheck()
         route("/api") {
             rateLimit(RateLimitName("auth")) {
