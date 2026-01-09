@@ -132,6 +132,55 @@
 			"response": []
 		},
 		{
+			"name": "Login with Google",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Response has tokens\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData).to.have.property('accessToken');",
+							"    pm.expect(jsonData).to.have.property('refreshToken');",
+							"    pm.collectionVariables.set(\"auth_token\", jsonData.accessToken);",
+							"    pm.collectionVariables.set(\"refresh_token\", jsonData.refreshToken);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"idToken\": \"PASTE_YOUR_FIREBASE_ID_TOKEN_HERE\"\n}"
+				},
+				"url": {
+					"raw": "{{host}}/api/auth/google",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"api",
+						"auth",
+						"google"
+					]
+				}
+			},
+			"response": []
+		},
+		{
 			"name": "Get User Info (Protected)",
 			"event": [
 				{
@@ -268,6 +317,14 @@
 		{
 			"key": "host",
 			"value": "http://localhost:8082"
+		},
+		{
+			"key": "auth_token",
+			"value": ""
+		},
+		{
+			"key": "refresh_token",
+			"value": ""
 		}
 	]
 }

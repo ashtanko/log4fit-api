@@ -56,6 +56,7 @@ dependencies {
     implementation(libs.ktor.simple.cache)
     implementation(libs.flyway.core)
     implementation(libs.flyway.database.postgresql)
+    implementation(libs.firebase.admin)
 
     implementation(libs.ktor.server.task.scheduling.core)
     implementation(libs.ktor.server.task.scheduling.jdbc)
@@ -113,7 +114,7 @@ flyway {
     url = System.getenv("DB_URL")
     user = System.getenv("DB_USER")
     password = System.getenv("DB_PASSWORD")
-    locations = arrayOf("classpath:db/migration") // Changed to classpath
+    locations = arrayOf("classpath:db/migration")
 }
 
 

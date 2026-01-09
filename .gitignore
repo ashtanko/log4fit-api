@@ -42,3 +42,4 @@ dist/
 nbdist/
 .nb-gradle/
 .vscode/
+service-account.json

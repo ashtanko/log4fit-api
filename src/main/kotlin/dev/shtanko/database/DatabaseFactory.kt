@@ -47,7 +47,7 @@ object DatabaseFactory {
     }
 
     private fun createPostgresDataSource(): HikariDataSource {
-        log.info("Using PostgreSQL database for: ${System.getenv("DB_URL")}")
+        log.info("Using PostgreSQL database for: ${System.getenv("DB_URL")} ${System.getenv("DB_USER")}")
         return HikariDataSource(HikariConfig().apply {
             driverClassName = "org.postgresql.Driver"
             jdbcUrl = System.getenv("DB_URL")

@@ -10,10 +10,13 @@ services:
             - DB_USER=${DB_USER}
             - DB_PASSWORD=${DB_PASSWORD}
             - SECRET_KEY=${SECRET_KEY}
+            - FIREBASE_SERVICE_ACCOUNT_JSON=${FIREBASE_SERVICE_ACCOUNT_JSON}
         depends_on:
             - db-dev
         volumes:
-            - ./.env:/app/.env
+            - ./.env.dev:/app/.env
+        env_file:
+            - .env.dev
 
     db-dev:
         image: postgres:15-alpine
@@ -29,13 +32,16 @@ services:
     pgadmin-dev:
         image: dpage/pgadmin4
         environment:
+            - PGADMIN_PORT=${PGADMIN_PORT}
             - PGADMIN_DEFAULT_EMAIL=${PGADMIN_DEFAULT_EMAIL}
             - PGADMIN_DEFAULT_PASSWORD=${PGADMIN_DEFAULT_PASSWORD}
             - PGADMIN_CONFIG_ENHANCED_COOKIE_PROTECTION=False
         ports:
-            - "5054:80"
+            - "${PGADMIN_PORT}:80"
         depends_on:
             - db-dev
+        volumes:
+            - pgadmin_dev_data:/var/lib/pgadmin
 
     dozzle-dev:
         image: amir20/dozzle:latest
@@ -47,3 +53,4 @@ services:
 
 volumes:
     postgres_data:
+    pgadmin_dev_data:

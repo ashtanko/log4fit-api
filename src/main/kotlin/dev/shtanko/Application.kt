@@ -15,7 +15,7 @@ fun main() {
     val isDev = env == "dev"
     System.setProperty("io.ktor.development", if (isProd) "false" else "true")
 
-    LoggerFactory.getLogger("Application").info("Starting application. ENV=$env, isProd=$isProd, PORT=$port")
+    LoggerFactory.getLogger("Application").info("Starting application. ENV=$env, isProd=$isProd, PORT=$port DB_PORT: ${System.getenv("DB_PORT")}")
 
     embeddedServer(Netty, port = port, host = "0.0.0.0") {
         module(isProd, isDev)
@@ -29,6 +29,7 @@ fun Application.module(isProd: Boolean, isDev: Boolean) {
     }
 
     configureCORS()
+    configureFirebase()
 
     configureAdministration()
     configureSerialization()

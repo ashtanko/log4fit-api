@@ -7,3 +7,7 @@ services:
             - "8084:8084"
         env_file:
             - .env.dev
+        volumes:
+            - ./service-account.json:/app/service-account.json
+        environment:
+            - FIREBASE_SERVICE_ACCOUNT_PATH=/app/service-account.json

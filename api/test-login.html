@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Firebase Login Test</title>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
+  <style>
+      body { font-family: sans-serif; padding: 20px; }
+      textarea { width: 100%; height: 150px; margin-top: 10px; }
+      button { padding: 10px 20px; font-size: 16px; cursor: pointer; }
+  </style>
+</head>
+<body>
+  <h1>Firebase Google Login Test</h1>
+  <p>Use this page to generate a valid Firebase ID Token for testing your backend.</p>
+
+  <button onclick="login()">Login with Google</button>
+
+  <h3>ID Token:</h3>
+  <p>Copy this token and use it in your Postman request to <code>POST /api/auth/google</code></p>
+  <textarea id="token" readonly placeholder="Token will appear here..."></textarea>
+
+  <script>
+    // TODO: Replace these values with your Firebase project configuration
+    // You can find these in the Firebase Console -> Project Settings -> General -> Your apps
+    const firebaseConfig = {
+      apiKey: "YOUR_API_KEY",
+      authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+      projectId: "YOUR_PROJECT_ID",
+      storageBucket: "YOUR_PROJECT_ID.appspot.com",
+      messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+      appId: "YOUR_APP_ID"
+    };
+
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+
+    function login() {
+      const provider = new firebase.auth.GoogleAuthProvider();
+      firebase.auth().signInWithPopup(provider)
+        .then((result) => {
+          // This gives you a Google Access Token. You can use it to access the Google API.
+          const credential = result.credential;
+          const token = credential.accessToken;
+          // The signed-in user info.
+          const user = result.user;
+
+          console.log("User:", user);
+
+          // Get the Firebase ID Token
+          user.getIdToken().then((idToken) => {
+            console.log("ID Token:", idToken);
+            document.getElementById('token').value = idToken;
+          });
+        }).catch((error) => {
+          console.error("Error:", error);
+          alert("Login failed: " + error.message);
+        });
+    }
+  </script>
+</body>
+</html>

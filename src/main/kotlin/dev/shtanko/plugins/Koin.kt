@@ -5,6 +5,7 @@ import dev.shtanko.repository.UserRepository
 import dev.shtanko.repository.impl.TokenRepositoryImpl
 import dev.shtanko.repository.impl.UserRepositoryImpl
 import dev.shtanko.service.AuthService
+import dev.shtanko.service.GoogleAuthService
 import dev.shtanko.service.JwtService
 import dev.shtanko.service.TransactionService
 import io.ktor.server.application.*
@@ -24,6 +25,7 @@ val serviceModule = module {
     singleOf(::JwtService)
     singleOf(::AuthService)
     singleOf(::TransactionService)
+    singleOf(::GoogleAuthService)
 }
 
 fun Application.configureKoin() {

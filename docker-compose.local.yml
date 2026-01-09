@@ -1,7 +1,11 @@
 services:
-  ktor-app-local:
-    build: .
-    ports:
-      - "8082:8082"
-    env_file:
-      - .env.local
+    ktor-app-local:
+        build: .
+        ports:
+            - "8082:8082"
+        env_file:
+            - .env.local
+        volumes:
+            - ./service-account.json:/app/service-account.json
+        environment:
+            - FIREBASE_SERVICE_ACCOUNT_PATH=/app/service-account.json

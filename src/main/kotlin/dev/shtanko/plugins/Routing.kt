@@ -1,6 +1,7 @@
 package dev.shtanko.plugins
 
 import dev.shtanko.routing.authMe
+import dev.shtanko.routing.googleLogin
 import dev.shtanko.routing.healthCheck
 import dev.shtanko.routing.login
 import dev.shtanko.routing.refreshToken
@@ -25,6 +26,7 @@ fun Application.configureRouting() {
                 route("/auth") {
                     register(authService)
                     login(authService)
+                    googleLogin(authService)
                 }
             }
 

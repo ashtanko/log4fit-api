@@ -1,5 +1,6 @@
 package dev.shtanko.service
 
+import dev.shtanko.dto.request.GoogleLoginRequest
 import dev.shtanko.dto.request.LoginRequest
 import dev.shtanko.dto.request.RegistrationRequest
 import dev.shtanko.dto.response.AboutResponse
@@ -21,6 +22,7 @@ class AuthService(
     private val userRepository: UserRepository,
     private val tokenRepository: TokenRepository,
     private val jwtService: JwtService,
+    private val googleAuthService: GoogleAuthService
 ) {
 
     suspend fun registerUser(registrationRequest: RegistrationRequest): TokenResponse {
@@ -62,6 +64,43 @@ class AuthService(
         val user = userRepository.findUserByEmail(email)
         if (user == null || !passwordMatches(loginRequest.password, user.password)) {
             throw UnauthorizedException("Invalid Email or password!")
+        }
+
+        val accessTokenValue = jwtService.createAccessToken(email)
+        val refreshTokenValue = jwtService.createFreshToken(email)
+        tokenRepository.revokedAllTokens(user.id, DateUtil.currentDateTime())
+        tokenRepository.save(
+            ExposedToken(
+                token = accessTokenValue,
+                refreshToken = refreshTokenValue,
+                userId = user.id
+            )
+        )
+
+        return TokenResponse(
+            accessToken = accessTokenValue,
+            refreshToken = refreshTokenValue,
+        )
+    }
+
+    suspend fun loginWithGoogle(request: GoogleLoginRequest): TokenResponse {
+        val firebaseToken = googleAuthService.verifyToken(request.idToken) ?: throw UnauthorizedException("Invalid Google Token")
+        val email = firebaseToken.email ?: throw UnauthorizedException("Google Token missing email")
+        val name = firebaseToken.name ?: "Google User"
+
+        var user = userRepository.findUserByEmail(email)
+        if (user == null) {
+            // Create new user
+            val userId = AppUtil.generateUUID()
+            userRepository.addUser(
+                ExposedUser(
+                    id = userId,
+                    name = name,
+                    email = email,
+                    password = "" // No password for Google users
+                )
+            )
+            user = userRepository.findUserByEmail(email)!!
         }
 
         val accessTokenValue = jwtService.createAccessToken(email)

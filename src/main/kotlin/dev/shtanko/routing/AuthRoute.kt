@@ -1,5 +1,6 @@
 package dev.shtanko.routing
 
+import dev.shtanko.dto.request.GoogleLoginRequest
 import dev.shtanko.dto.request.LoginRequest
 import dev.shtanko.dto.request.RegistrationRequest
 import dev.shtanko.service.AuthService
@@ -22,6 +23,14 @@ fun Route.login(authService: AuthService) {
         val loginRequest = call.receive<LoginRequest>()
         val loginResponse = authService.login(loginRequest)
         call.respond(HttpStatusCode.OK, loginResponse)
+    }
+}
+
+fun Route.googleLogin(authService: AuthService) {
+    post("/google") {
+        val request = call.receive<GoogleLoginRequest>()
+        val tokenResponse = authService.loginWithGoogle(request)
+        call.respond(HttpStatusCode.OK, tokenResponse)
     }
 }
 
