@@ -1,10 +1,13 @@
 package dev.shtanko.plugins
 
+import dev.shtanko.repository.ExerciseRepository
 import dev.shtanko.repository.TokenRepository
 import dev.shtanko.repository.UserRepository
+import dev.shtanko.repository.impl.ExerciseRepositoryImpl
 import dev.shtanko.repository.impl.TokenRepositoryImpl
 import dev.shtanko.repository.impl.UserRepositoryImpl
 import dev.shtanko.service.AuthService
+import dev.shtanko.service.ExerciseService
 import dev.shtanko.service.GoogleAuthService
 import dev.shtanko.service.JwtService
 import dev.shtanko.service.TransactionService
@@ -19,6 +22,7 @@ import org.koin.logger.slf4jLogger
 val repositoryModule = module {
     singleOf(::UserRepositoryImpl).bind<UserRepository>()
     singleOf(::TokenRepositoryImpl).bind<TokenRepository>()
+    singleOf(::ExerciseRepositoryImpl).bind<ExerciseRepository>()
 }
 
 val serviceModule = module {
@@ -26,6 +30,7 @@ val serviceModule = module {
     singleOf(::AuthService)
     singleOf(::TransactionService)
     singleOf(::GoogleAuthService)
+    singleOf(::ExerciseService)
 }
 
 fun Application.configureKoin() {

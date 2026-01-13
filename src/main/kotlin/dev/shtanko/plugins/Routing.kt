@@ -1,6 +1,7 @@
 package dev.shtanko.plugins
 
 import dev.shtanko.routing.authMe
+import dev.shtanko.routing.exerciseRoutes
 import dev.shtanko.routing.googleLogin
 import dev.shtanko.routing.healthCheck
 import dev.shtanko.routing.login
@@ -8,6 +9,7 @@ import dev.shtanko.routing.refreshToken
 import dev.shtanko.routing.register
 import dev.shtanko.routing.transactionRoute
 import dev.shtanko.service.AuthService
+import dev.shtanko.service.ExerciseService
 import dev.shtanko.service.TransactionService
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
@@ -20,6 +22,7 @@ import org.koin.ktor.ext.inject
 fun Application.configureRouting() {
     val authService by inject<AuthService>()
     val transactionService by inject<TransactionService>()
+    val exerciseService by inject<ExerciseService>()
     routing {
         // Serve static resources from the "static" folder
         staticResources("/", "static") {
@@ -41,6 +44,7 @@ fun Application.configureRouting() {
                     val requestsLeft = call.response.headers["X-RateLimit-Remaining"]
                     call.respondText("Welcome to public API! $requestsLeft requests left.")
                 }
+                exerciseRoutes(exerciseService)
             }
             rateLimit(RateLimitName("protected")) {
                 get("/protected-api") {
