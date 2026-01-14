@@ -1,8 +1,8 @@
 package dev.shtanko.repository.impl
 
+import dev.shtanko.database.DatabaseFactory
 import dev.shtanko.database.TableConverter
 import dev.shtanko.database.tables.UserTokenTable
-import dev.shtanko.database.DatabaseFactory
 import dev.shtanko.model.ExposedToken
 import dev.shtanko.repository.TokenRepository
 import kotlinx.datetime.LocalDateTime

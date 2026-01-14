@@ -101,7 +101,7 @@ class ActivityRepositoryTest {
         }
 
         activityRepository.createActivity(testUserId, ActivityRequest(testExerciseId, "2023-10-27T10:00:00"))
-        
+
         val user1Activities = activityRepository.getActivitiesByUserId(testUserId, 10, 0)
         val user2Activities = activityRepository.getActivitiesByUserId(otherUserId, 10, 0)
 

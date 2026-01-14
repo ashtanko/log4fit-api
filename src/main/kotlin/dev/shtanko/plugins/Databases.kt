@@ -6,7 +6,7 @@ import java.sql.Connection
 import java.sql.DriverManager
 
 fun Application.configureDatabases() {
-    val dbConnection: Connection = connectToPostgres(embedded = true)
+    connectToPostgres(embedded = true)
 
 }
 

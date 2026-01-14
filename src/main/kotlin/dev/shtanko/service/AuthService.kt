@@ -10,13 +10,13 @@ import dev.shtanko.model.ExposedUser
 import dev.shtanko.repository.TokenRepository
 import dev.shtanko.repository.UserRepository
 import dev.shtanko.util.AppUtil
+import dev.shtanko.util.AppUtil.generateUniqueDigits
 import dev.shtanko.util.ConflictException
 import dev.shtanko.util.DateUtil
 import dev.shtanko.util.NotFoundException
 import dev.shtanko.util.UnauthorizedException
 import dev.shtanko.util.passwordMatches
 import dev.shtanko.util.toHashString
-import dev.shtanko.util.AppUtil.generateUniqueDigits
 
 class AuthService(
     private val userRepository: UserRepository,
@@ -26,36 +26,36 @@ class AuthService(
 ) {
 
     suspend fun registerUser(registrationRequest: RegistrationRequest): TokenResponse {
-            val email = registrationRequest.email
-            if (userRepository.emailExist(email)) {
-                throw ConflictException("Email is in-use")
-            }
+        val email = registrationRequest.email
+        if (userRepository.emailExist(email)) {
+            throw ConflictException("Email is in-use")
+        }
 
-            val userId = AppUtil.generateUUID()
-            userRepository.addUser(
-                ExposedUser(
-                    id = userId,
-                    name = registrationRequest.name,
-                    email = email,
-                    password = registrationRequest.password.toHashString()
-                )
+        val userId = AppUtil.generateUUID()
+        userRepository.addUser(
+            ExposedUser(
+                id = userId,
+                name = registrationRequest.name,
+                email = email,
+                password = registrationRequest.password.toHashString()
             )
+        )
 
-            val accessTokenValue = jwtService.createAccessToken(email, userId)
-            val refreshTokenValue = jwtService.createFreshToken(email, userId)
-            tokenRepository.revokedAllTokens(userId, DateUtil.currentDateTime())
-            tokenRepository.save(
-                ExposedToken(
-                    token = accessTokenValue,
-                    refreshToken = refreshTokenValue,
-                    userId = userId
-                )
-            )
-
-            return TokenResponse(
-                accessToken = accessTokenValue,
+        val accessTokenValue = jwtService.createAccessToken(email, userId)
+        val refreshTokenValue = jwtService.createFreshToken(email, userId)
+        tokenRepository.revokedAllTokens(userId, DateUtil.currentDateTime())
+        tokenRepository.save(
+            ExposedToken(
+                token = accessTokenValue,
                 refreshToken = refreshTokenValue,
+                userId = userId
             )
+        )
+
+        return TokenResponse(
+            accessToken = accessTokenValue,
+            refreshToken = refreshTokenValue,
+        )
 
     }
 
@@ -84,7 +84,8 @@ class AuthService(
     }
 
     suspend fun loginWithGoogle(request: GoogleLoginRequest): TokenResponse {
-        val firebaseToken = googleAuthService.verifyToken(request.idToken) ?: throw UnauthorizedException("Invalid Google Token")
+        val firebaseToken =
+            googleAuthService.verifyToken(request.idToken) ?: throw UnauthorizedException("Invalid Google Token")
         val email = firebaseToken.email ?: throw UnauthorizedException("Google Token missing email")
         val name = firebaseToken.name ?: "Google User"
 

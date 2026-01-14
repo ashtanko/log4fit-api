@@ -2,10 +2,22 @@ package dev.shtanko
 
 import configureCORS
 import dev.shtanko.database.DatabaseFactory
-import dev.shtanko.plugins.*
-import io.ktor.server.application.*
-import io.ktor.server.engine.*
-import io.ktor.server.netty.*
+import dev.shtanko.plugins.configureAdministration
+import dev.shtanko.plugins.configureAsyncApi
+import dev.shtanko.plugins.configureExceptionHandler
+import dev.shtanko.plugins.configureFirebase
+import dev.shtanko.plugins.configureHTTP
+import dev.shtanko.plugins.configureKoin
+import dev.shtanko.plugins.configureMonitoring
+import dev.shtanko.plugins.configureOpenApi
+import dev.shtanko.plugins.configureRateLimit
+import dev.shtanko.plugins.configureRouting
+import dev.shtanko.plugins.configureSecurity
+import dev.shtanko.plugins.configureSerialization
+import dev.shtanko.plugins.configureValidation
+import io.ktor.server.application.Application
+import io.ktor.server.engine.embeddedServer
+import io.ktor.server.netty.Netty
 import org.slf4j.LoggerFactory
 
 fun main() {
@@ -15,7 +27,8 @@ fun main() {
     val isDev = env == "dev"
     System.setProperty("io.ktor.development", if (isProd) "false" else "true")
 
-    LoggerFactory.getLogger("Application").info("Starting application. ENV=$env, isProd=$isProd, PORT=$port DB_PORT: ${System.getenv("DB_PORT")}")
+    LoggerFactory.getLogger("Application")
+        .info("Starting application. ENV=$env, isProd=$isProd, PORT=$port DB_PORT: ${System.getenv("DB_PORT")}")
 
     embeddedServer(Netty, port = port, host = "0.0.0.0") {
         module(isProd, isDev)

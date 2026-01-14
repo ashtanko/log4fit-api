@@ -1,12 +1,12 @@
 package dev.shtanko.plugins
 
 import dev.shtanko.service.JwtService
-import io.ktor.http.*
-import io.ktor.server.application.*
-import io.ktor.server.auth.*
-import io.ktor.server.auth.jwt.*
-import io.ktor.server.request.*
-import io.ktor.server.response.*
+import io.ktor.http.HttpStatusCode
+import io.ktor.server.application.Application
+import io.ktor.server.auth.authentication
+import io.ktor.server.auth.jwt.jwt
+import io.ktor.server.request.header
+import io.ktor.server.response.respond
 import org.koin.ktor.ext.inject
 
 fun Application.configureSecurity() {

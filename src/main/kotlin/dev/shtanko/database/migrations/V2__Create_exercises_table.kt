@@ -41,7 +41,13 @@ class V2__Create_exercises_table : BaseJavaMigration() {
         }
     }
 
-    private fun insertExercise(name: String, description: String, category: String, muscleGroup: String, equipment: String) {
+    private fun insertExercise(
+        name: String,
+        description: String,
+        category: String,
+        muscleGroup: String,
+        equipment: String
+    ) {
         ExerciseTable.insert {
             it[this.id] = name // Set ID to name for easier reference
             it[this.name] = name

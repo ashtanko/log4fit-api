@@ -3,7 +3,7 @@ package dev.shtanko.plugins
 import com.google.auth.oauth2.GoogleCredentials
 import com.google.firebase.FirebaseApp
 import com.google.firebase.FirebaseOptions
-import io.ktor.server.application.*
+import io.ktor.server.application.Application
 import org.slf4j.LoggerFactory
 import java.io.ByteArrayInputStream
 import java.io.FileInputStream
@@ -21,12 +21,14 @@ fun Application.configureFirebase() {
                     .setCredentials(GoogleCredentials.fromStream(ByteArrayInputStream(serviceAccountJson.toByteArray())))
                     .build()
             }
+
             !serviceAccountPath.isNullOrBlank() -> {
                 log.info("Initializing Firebase from file: $serviceAccountPath")
                 FirebaseOptions.builder()
                     .setCredentials(GoogleCredentials.fromStream(FileInputStream(serviceAccountPath)))
                     .build()
             }
+
             else -> {
                 log.warn("No Firebase service account found. Firebase features will be disabled.")
                 null

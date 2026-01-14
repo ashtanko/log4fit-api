@@ -14,7 +14,8 @@ import dev.shtanko.service.ExerciseService
 import dev.shtanko.service.GoogleAuthService
 import dev.shtanko.service.JwtService
 import dev.shtanko.service.TransactionService
-import io.ktor.server.application.*
+import io.ktor.server.application.Application
+import io.ktor.server.application.install
 import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.bind
 import org.koin.dsl.module

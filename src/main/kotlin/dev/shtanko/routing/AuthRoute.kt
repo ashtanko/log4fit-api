@@ -5,10 +5,12 @@ import dev.shtanko.dto.request.LoginRequest
 import dev.shtanko.dto.request.RegistrationRequest
 import dev.shtanko.service.AuthService
 import dev.shtanko.service.JwtService.Companion.getUsername
-import io.ktor.http.*
-import io.ktor.server.request.*
+import io.ktor.http.HttpStatusCode
+import io.ktor.server.request.receive
 import io.ktor.server.response.respond
-import io.ktor.server.routing.*
+import io.ktor.server.routing.Route
+import io.ktor.server.routing.get
+import io.ktor.server.routing.post
 
 fun Route.register(authService: AuthService) {
     post("/register") {

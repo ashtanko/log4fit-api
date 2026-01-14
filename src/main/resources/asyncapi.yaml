@@ -1,21 +1,21 @@
 asyncapi: 2.0.0
 info:
-  title: Log4Fit API
-  version: 1.0.0
-  description: This is a sample API for Log4Fit.
+    title: Log4Fit API
+    version: 1.0.0
+    description: This is a sample API for Log4Fit.
 
 channels:
-  user/signedup:
-    subscribe:
-      message:
-        $ref: '#/components/messages/UserSignedUp'
+    user/signedup:
+        subscribe:
+            message:
+                $ref: '#/components/messages/UserSignedUp'
 
 components:
-  messages:
-    UserSignedUp:
-      payload:
-        type: object
-        properties:
-          displayName:
-            type: string
-            description: 'Name of the user'
+    messages:
+        UserSignedUp:
+            payload:
+                type: object
+                properties:
+                    displayName:
+                        type: string
+                        description: 'Name of the user'

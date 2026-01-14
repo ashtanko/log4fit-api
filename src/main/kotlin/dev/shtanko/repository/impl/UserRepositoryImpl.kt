@@ -1,8 +1,8 @@
 package dev.shtanko.repository.impl
 
+import dev.shtanko.database.DatabaseFactory
 import dev.shtanko.database.TableConverter
 import dev.shtanko.database.tables.UserTable
-import dev.shtanko.database.DatabaseFactory
 import dev.shtanko.model.ExposedUser
 import dev.shtanko.repository.UserRepository
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq

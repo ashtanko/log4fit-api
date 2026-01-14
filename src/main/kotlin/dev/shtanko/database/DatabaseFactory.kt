@@ -26,7 +26,7 @@ object DatabaseFactory {
         val flyway = Flyway.configure()
             .dataSource(dataSource)
             // Use classpath prefix for package scanning
-            .locations("classpath:dev/shtanko/database/migrations") 
+            .locations("classpath:dev/shtanko/database/migrations")
             .load()
         try {
             flyway.info()

@@ -1,7 +1,6 @@
 package dev.shtanko.database.tables
 
 import dev.shtanko.database.tables.base.BaseIdTable
-import org.jetbrains.exposed.sql.Column
 import org.jetbrains.exposed.sql.ReferenceOption
 import org.jetbrains.exposed.sql.kotlin.datetime.datetime
 

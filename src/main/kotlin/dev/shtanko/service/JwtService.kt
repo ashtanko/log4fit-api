@@ -6,9 +6,10 @@ import com.auth0.jwt.algorithms.Algorithm
 import dev.shtanko.repository.TokenRepository
 import dev.shtanko.repository.UserRepository
 import dev.shtanko.util.DateUtil
-import io.ktor.server.auth.*
-import io.ktor.server.auth.jwt.*
-import io.ktor.server.routing.*
+import io.ktor.server.auth.jwt.JWTCredential
+import io.ktor.server.auth.jwt.JWTPrincipal
+import io.ktor.server.auth.principal
+import io.ktor.server.routing.RoutingCall
 import org.slf4j.LoggerFactory
 import java.time.Instant
 import java.time.LocalDateTime
@@ -61,7 +62,8 @@ class JwtService(
 
 
         val findByToken =
-            (if (isAccessToken) tokenRepository.findByToken(jwt) else tokenRepository.findByRefreshToken(jwt)) ?: return null
+            (if (isAccessToken) tokenRepository.findByToken(jwt) else tokenRepository.findByRefreshToken(jwt))
+                ?: return null
 
         if (findByToken.revoked) {
             tokenRepository.revokedAllTokens(findByToken.userId, DateUtil.currentDateTime())

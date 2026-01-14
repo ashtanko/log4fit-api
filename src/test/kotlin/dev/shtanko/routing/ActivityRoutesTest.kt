@@ -6,15 +6,20 @@ import dev.shtanko.dto.response.ActivityResponse
 import dev.shtanko.dto.response.PagedResponse
 import dev.shtanko.dto.response.TokenResponse
 import dev.shtanko.module
-import io.ktor.client.call.*
-import io.ktor.client.plugins.contentnegotiation.*
-import io.ktor.client.request.*
-import io.ktor.http.*
-import io.ktor.serialization.kotlinx.json.*
-import io.ktor.server.testing.*
+import io.ktor.client.call.body
+import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
+import io.ktor.client.request.get
+import io.ktor.client.request.header
+import io.ktor.client.request.post
+import io.ktor.client.request.setBody
+import io.ktor.http.ContentType
+import io.ktor.http.HttpHeaders
+import io.ktor.http.HttpStatusCode
+import io.ktor.http.contentType
+import io.ktor.serialization.kotlinx.json.json
+import io.ktor.server.testing.testApplication
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlin.test.assertNotNull
 
 class ActivityRoutesTest {
 
@@ -36,12 +41,12 @@ class ActivityRoutesTest {
             contentType(ContentType.Application.Json)
             setBody(RegistrationRequest("Test Runner", "runner@test.com", "Password123"))
         }.body<TokenResponse>()
-        
+
         val token = authResponse.accessToken
 
         // 2. Log an activity (Exercise ID 'Pull Up' comes from V2 migration)
         val activityReq = ActivityRequest(
-            exerciseId = "Pull Up", 
+            exerciseId = "Pull Up",
             startTime = "2023-10-27T10:00:00",
             notes = "First integrated log",
             rpe = 7
@@ -52,7 +57,7 @@ class ActivityRoutesTest {
             contentType(ContentType.Application.Json)
             setBody(activityReq)
         }
-        
+
         assertEquals(HttpStatusCode.Created, postResponse.status)
         val createdActivity = postResponse.body<ActivityResponse>()
         assertEquals("Pull Up", createdActivity.exerciseName)
@@ -61,7 +66,7 @@ class ActivityRoutesTest {
         val getResponse = client.get("/api/activities") {
             header(HttpHeaders.Authorization, "Bearer $token")
         }
-        
+
         assertEquals(HttpStatusCode.OK, getResponse.status)
         val history = getResponse.body<PagedResponse<ActivityResponse>>()
         assertEquals(1, history.total)
@@ -80,7 +85,7 @@ class ActivityRoutesTest {
         application {
             module(isProd = false, isDev = false)
         }
-        
+
         val client = createClient { install(ContentNegotiation) { json() } }
 
         val response = client.get("/api/activities")

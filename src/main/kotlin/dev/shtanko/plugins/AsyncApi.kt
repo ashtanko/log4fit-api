@@ -2,7 +2,7 @@ package dev.shtanko.plugins
 
 //import com.asyncapi.plugin.ktor.AsyncApi
 //import com.asyncapi.plugin.ktor.AsyncApiExtension
-import io.ktor.server.application.*
+import io.ktor.server.application.Application
 
 //
 fun Application.configureAsyncApi() {

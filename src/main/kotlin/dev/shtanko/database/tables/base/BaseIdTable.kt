@@ -3,12 +3,16 @@ package dev.shtanko.database.tables.base
 import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
-import org.jetbrains.exposed.dao.*
+import org.jetbrains.exposed.dao.Entity
+import org.jetbrains.exposed.dao.EntityChangeType
+import org.jetbrains.exposed.dao.EntityClass
+import org.jetbrains.exposed.dao.EntityHook
 import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.dao.id.IdTable
+import org.jetbrains.exposed.dao.toEntity
 import org.jetbrains.exposed.sql.Column
 import org.jetbrains.exposed.sql.kotlin.datetime.datetime
-import java.util.*
+import java.util.UUID
 
 abstract class BaseIdTable(name: String) : IdTable<String>(name) {
     override val id: Column<EntityID<String>> =

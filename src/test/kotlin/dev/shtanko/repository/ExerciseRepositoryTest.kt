@@ -23,7 +23,7 @@ class ExerciseRepositoryTest {
         DatabaseFactory.init(isProd = false, isDev = false, dbName = "exercise_repo_test")
         transaction {
             SchemaUtils.create(ExerciseTable)
-            
+
             // Insert some test data
             ExerciseTable.insert {
                 it[id] = "ex-1"
@@ -33,7 +33,7 @@ class ExerciseRepositoryTest {
                 it[muscleGroup] = "LEGS"
                 it[equipment] = "BARBELL"
             }
-            
+
             ExerciseTable.insert {
                 it[id] = "ex-2"
                 it[name] = "Push-up"
@@ -86,7 +86,7 @@ class ExerciseRepositoryTest {
         assertEquals(1, result.data.size)
         assertEquals(2, result.total)
         assertEquals(1, result.page)
-        
+
         val result2 = exerciseRepository.getAllExercises(limit = 1, offset = 1)
         assertEquals(1, result2.data.size)
         assertEquals(2, result2.page)

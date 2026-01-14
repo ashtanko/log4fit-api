@@ -5,8 +5,8 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class RecentTransactionResponse(
-    val transactionType:String,
-    val amount:Double,
+    val transactionType: String,
+    val amount: Double,
     val time: LocalDateTime,
     val status: Boolean  //True | False
 )
