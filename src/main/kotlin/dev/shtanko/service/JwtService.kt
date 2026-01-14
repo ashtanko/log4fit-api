@@ -31,21 +31,22 @@ class JwtService(
         .withIssuer(jwtIssuer)
         .build()
 
-    fun createAccessToken(username: String) = createToken(
-        username, expireAt = DateUtil.getExpirationInstantInSeconds(120)
+    fun createAccessToken(email: String, userId: String) = createToken(
+        email, userId, expireAt = DateUtil.getExpirationInstantInSeconds(1200) // Increased for better UX during dev
     )
 
-    fun createFreshToken(username: String) =
+    fun createFreshToken(email: String, userId: String) =
         createToken(
-            username, expireAt = DateUtil.getExpirationInstantInDays(30)
+            email, userId, expireAt = DateUtil.getExpirationInstantInDays(30)
         )
 
-    private fun createToken(username: String, expireAt: Instant): String {
+    private fun createToken(email: String, userId: String, expireAt: Instant): String {
         val jwtToken = JWT.create()
             .withAudience(jwtAudience)
             .withIssuer(jwtIssuer)
-            .withClaim("username", username)
-            .withSubject(username)
+            .withClaim("email", email)
+            .withClaim("userId", userId)
+            .withSubject(email)
             .withExpiresAt(expireAt)
             .sign(Algorithm.HMAC256(jwtSecret))
         return jwtToken.toString()
@@ -69,9 +70,9 @@ class JwtService(
 
         if (isTokenExpired(credential)) return null
 
-        val username = extractClaim(credential)
+        val email = extractClaim(credential, "email") ?: credential.payload.subject
 
-        return username?.let {
+        return email?.let {
             val user = userRepository.findUserByEmail(it)
             if (user != null && validAudience(credential)) {
                 JWTPrincipal(credential.payload)

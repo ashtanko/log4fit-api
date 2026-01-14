@@ -1,11 +1,14 @@
 package dev.shtanko.plugins
 
+import dev.shtanko.repository.ActivityRepository
 import dev.shtanko.repository.ExerciseRepository
 import dev.shtanko.repository.TokenRepository
 import dev.shtanko.repository.UserRepository
+import dev.shtanko.repository.impl.ActivityRepositoryImpl
 import dev.shtanko.repository.impl.ExerciseRepositoryImpl
 import dev.shtanko.repository.impl.TokenRepositoryImpl
 import dev.shtanko.repository.impl.UserRepositoryImpl
+import dev.shtanko.service.ActivityService
 import dev.shtanko.service.AuthService
 import dev.shtanko.service.ExerciseService
 import dev.shtanko.service.GoogleAuthService
@@ -23,6 +26,7 @@ val repositoryModule = module {
     singleOf(::UserRepositoryImpl).bind<UserRepository>()
     singleOf(::TokenRepositoryImpl).bind<TokenRepository>()
     singleOf(::ExerciseRepositoryImpl).bind<ExerciseRepository>()
+    singleOf(::ActivityRepositoryImpl).bind<ActivityRepository>()
 }
 
 val serviceModule = module {
@@ -31,6 +35,7 @@ val serviceModule = module {
     singleOf(::TransactionService)
     singleOf(::GoogleAuthService)
     singleOf(::ExerciseService)
+    singleOf(::ActivityService)
 }
 
 fun Application.configureKoin() {

@@ -1,4 +1,4 @@
-package db.migration
+package dev.shtanko.database.migrations
 
 import dev.shtanko.database.tables.UserTable
 import dev.shtanko.database.tables.UserTokenTable

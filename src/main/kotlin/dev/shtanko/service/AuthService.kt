@@ -41,8 +41,8 @@ class AuthService(
                 )
             )
 
-            val accessTokenValue = jwtService.createAccessToken(email)
-            val refreshTokenValue = jwtService.createFreshToken(email)
+            val accessTokenValue = jwtService.createAccessToken(email, userId)
+            val refreshTokenValue = jwtService.createFreshToken(email, userId)
             tokenRepository.revokedAllTokens(userId, DateUtil.currentDateTime())
             tokenRepository.save(
                 ExposedToken(
@@ -66,8 +66,8 @@ class AuthService(
             throw UnauthorizedException("Invalid Email or password!")
         }
 
-        val accessTokenValue = jwtService.createAccessToken(email)
-        val refreshTokenValue = jwtService.createFreshToken(email)
+        val accessTokenValue = jwtService.createAccessToken(email, user.id)
+        val refreshTokenValue = jwtService.createFreshToken(email, user.id)
         tokenRepository.revokedAllTokens(user.id, DateUtil.currentDateTime())
         tokenRepository.save(
             ExposedToken(
@@ -103,8 +103,8 @@ class AuthService(
             user = userRepository.findUserByEmail(email)!!
         }
 
-        val accessTokenValue = jwtService.createAccessToken(email)
-        val refreshTokenValue = jwtService.createFreshToken(email)
+        val accessTokenValue = jwtService.createAccessToken(email, user.id)
+        val refreshTokenValue = jwtService.createFreshToken(email, user.id)
         tokenRepository.revokedAllTokens(user.id, DateUtil.currentDateTime())
         tokenRepository.save(
             ExposedToken(
@@ -135,8 +135,8 @@ class AuthService(
     suspend fun refreshToken(username: String): TokenResponse {
         return userRepository.findUserByEmail(username)?.let {
             tokenRepository.revokedAllTokens(it.id, DateUtil.currentDateTime())
-            val accessToken = jwtService.createAccessToken(username)
-            val refreshToken = jwtService.createFreshToken(username)
+            val accessToken = jwtService.createAccessToken(username, it.id)
+            val refreshToken = jwtService.createFreshToken(username, it.id)
             tokenRepository.save(
                 ExposedToken(
                     token = accessToken,

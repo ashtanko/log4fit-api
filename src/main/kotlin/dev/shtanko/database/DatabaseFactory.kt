@@ -14,16 +14,20 @@ object DatabaseFactory {
     private lateinit var dataSource: DataSource
     private val log = LoggerFactory.getLogger(DatabaseFactory::class.java)
 
-    fun init(isProd: Boolean, isDev: Boolean) {
+    fun init(isProd: Boolean, isDev: Boolean, dbName: String = "test") {
         dataSource = when {
             isProd || isDev -> createPostgresDataSource()
-            else -> createH2DataSource()
+            else -> createH2DataSource(dbName)
         }
         Database.connect(dataSource)
     }
 
     fun runFlywayMigrations() {
-        val flyway = Flyway.configure().dataSource(dataSource).load()
+        val flyway = Flyway.configure()
+            .dataSource(dataSource)
+            // Use classpath prefix for package scanning
+            .locations("classpath:dev/shtanko/database/migrations") 
+            .load()
         try {
             flyway.info()
             flyway.migrate()
@@ -34,11 +38,11 @@ object DatabaseFactory {
         log.info("Flyway migration has finished")
     }
 
-    private fun createH2DataSource(): HikariDataSource {
-        log.info("Using H2 in-memory database for local development.")
+    private fun createH2DataSource(dbName: String): HikariDataSource {
+        log.info("Using H2 in-memory database: $dbName")
         return HikariDataSource(HikariConfig().apply {
             driverClassName = "org.h2.Driver"
-            jdbcUrl = "jdbc:h2:mem:test;DB_CLOSE_DELAY=-1;"
+            jdbcUrl = "jdbc:h2:mem:$dbName;DB_CLOSE_DELAY=-1;"
             maximumPoolSize = 3
             isAutoCommit = false
             transactionIsolation = "TRANSACTION_REPEATABLE_READ"

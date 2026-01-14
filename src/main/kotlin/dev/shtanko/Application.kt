@@ -24,9 +24,14 @@ fun main() {
 
 fun Application.module(isProd: Boolean, isDev: Boolean) {
     DatabaseFactory.init(isProd, isDev)
-    if (isProd or isDev) {
-        DatabaseFactory.runFlywayMigrations()
-    }
+
+    // Always run migrations unless specifically disabled (e.g. via a property)
+    // For H2 in-memory, we always need to run them to create the schema.
+    DatabaseFactory.runFlywayMigrations()
+
+//    if (isProd or isDev) {
+//        DatabaseFactory.runFlywayMigrations()
+//    }
 
     configureCORS()
     configureFirebase()
