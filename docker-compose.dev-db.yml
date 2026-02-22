@@ -15,11 +15,13 @@ services:
             - db-dev
         volumes:
             - ./.env.dev:/app/.env
+        restart: unless-stopped
         env_file:
             - .env.dev
 
     db-dev:
         image: postgres:15-alpine
+        restart: unless-stopped
         environment:
             - POSTGRES_DB=${DB_NAME}
             - POSTGRES_USER=${DB_USER}
@@ -31,6 +33,7 @@ services:
 
     pgadmin-dev:
         image: dpage/pgadmin4
+        restart: unless-stopped
         environment:
             - PGADMIN_PORT=${PGADMIN_PORT}
             - PGADMIN_DEFAULT_EMAIL=${PGADMIN_DEFAULT_EMAIL}
