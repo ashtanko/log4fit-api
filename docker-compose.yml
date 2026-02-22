@@ -1,5 +1,6 @@
 services:
     ktor-app-prod:
+        restart: unless-stopped
         build: .
         ports:
             - "8083:8083"
@@ -20,6 +21,7 @@ services:
 
     db-prod:
         image: postgres:15-alpine
+        restart: unless-stopped
         environment:
             - POSTGRES_DB=${DB_NAME}
             - POSTGRES_USER=${DB_USER}
@@ -30,6 +32,7 @@ services:
             - postgres_data:/var/lib/postgresql/data
 
     pgadmin-prod:
+        restart: unless-stopped
         image: dpage/pgadmin4
         environment:
             - PGADMIN_PORT=${PGADMIN_PORT}
