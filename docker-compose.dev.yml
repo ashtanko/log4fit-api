@@ -2,7 +2,7 @@ services:
     ktor-app-dev:
         build:
             target: dev
-        restart: always
+        restart: unless-stopped
         ports:
             - "8084:8084"
         env_file:
