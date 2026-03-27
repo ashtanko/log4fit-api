@@ -36,49 +36,64 @@ fun Application.configureRouting() {
         }
 
         healthCheck()
+        
         route("/api") {
-            rateLimit(RateLimitName("auth")) {
-                route("/auth") {
-                    register(authService)
-                    login(authService)
-                    googleLogin(authService)
+            // Version 1 API
+            route("/v1") {
+                rateLimit(RateLimitName("auth")) {
+                    route("/auth") {
+                        register(authService)
+                        login(authService)
+                        googleLogin(authService)
+                    }
                 }
-            }
 
-            rateLimit(RateLimitName("public")) {
-                get("/public-api") {
-                    val requestsLeft = call.response.headers["X-RateLimit-Remaining"]
-                    call.respondText("Welcome to public API! $requestsLeft requests left.")
+                rateLimit(RateLimitName("public")) {
+                    get("/public-api") {
+                        val requestsLeft = call.response.headers["X-RateLimit-Remaining"]
+                        call.respondText("Welcome to public API v1! $requestsLeft requests left.")
+                    }
+                    exerciseRoutes(exerciseService)
                 }
-                exerciseRoutes(exerciseService)
-            }
-            rateLimit(RateLimitName("protected")) {
-                get("/protected-api") {
-                    val requestsLeft = call.response.headers["X-RateLimit-Remaining"]
-                    val login = call.request.queryParameters["login"]
-                    call.respondText("Welcome to protected API, $login! $requestsLeft requests left.")
+                rateLimit(RateLimitName("protected")) {
+                    get("/protected-api") {
+                        val requestsLeft = call.response.headers["X-RateLimit-Remaining"]
+                        val login = call.request.queryParameters["login"]
+                        call.respondText("Welcome to protected API v1, $login! $requestsLeft requests left.")
+                    }
                 }
-            }
 
-            rateLimit(RateLimitName("auth")) {
-                route("/auth") {
+                rateLimit(RateLimitName("auth")) {
+                    route("/auth") {
+                        authenticate("access-token-auth") {
+                            authMe(authService = authService)
+                        }
+
+                        authenticate("refresh-token-auth") {
+                            refreshToken(authService = authService)
+                        }
+                    }
+                }
+
+                route("/transactions") {
                     authenticate("access-token-auth") {
-                        authMe(authService = authService)
+                        transactionRoute(transactionService)
                     }
+                }
 
-                    authenticate("refresh-token-auth") {
-                        refreshToken(authService = authService)
+                activityRoute(activityService)
+            }
+
+            // Version 2 API (Example)
+            route("/v2") {
+                rateLimit(RateLimitName("public")) {
+                    get("/public-api") {
+                        val requestsLeft = call.response.headers["X-RateLimit-Remaining"]
+                        // v2 response might be JSON instead of text, or have different fields
+                        call.respondText("{\"message\": \"Welcome to public API v2!\", \"requests_left\": \"$requestsLeft\"}", io.ktor.http.ContentType.Application.Json)
                     }
                 }
             }
-
-            route("/transactions") {
-                authenticate("access-token-auth") {
-                    transactionRoute(transactionService)
-                }
-            }
-
-            activityRoute(activityService)
         }
     }
 }

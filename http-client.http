@@ -1,5 +1,5 @@
-### Public API Test
-GET {{host}}/api/public-api
+### Public API Test v1
+GET {{host}}/api/v1/public-api
 Accept: application/json
 
 > {%
@@ -8,8 +8,19 @@ Accept: application/json
     });
 %}
 
+### Public API Test v2
+GET {{host}}/api/v2/public-api
+Accept: application/json
+
+> {%
+    client.test("Request executed successfully", function() {
+        client.assert(response.status === 200, "Response status is not 200");
+        client.assert(response.body.hasOwnProperty("message"), "Response body missing 'message'");
+    });
+%}
+
 ### Register User
-POST {{host}}/api/auth/register
+POST {{host}}/api/v1/auth/register
 Content-Type: application/json
 
 {
@@ -29,7 +40,7 @@ Content-Type: application/json
 %}
 
 ### Login User
-POST {{host}}/api/auth/login
+POST {{host}}/api/v1/auth/login
 Content-Type: application/json
 
 {
@@ -53,7 +64,7 @@ Content-Type: application/json
 %}
 
 ### Get User Info (Protected)
-GET {{host}}/api/auth/me
+GET {{host}}/api/v1/auth/me
 Authorization: Bearer {{auth_token}}
 Accept: application/json
 
@@ -64,7 +75,7 @@ Accept: application/json
 %}
 
 ### Refresh Token
-POST {{host}}/api/auth/refresh
+POST {{host}}/api/v1/auth/refresh
 Authorization: Bearer {{refresh_token}}
 Content-Type: application/json
 
